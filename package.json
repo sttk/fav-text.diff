@@ -1,0 +1,44 @@
+{
+  "name": "@fav/text.diff",
+  "version": "0.1.0",
+  "description": "Get diff between two texts.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib/",
+    "web/"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "test": "mocha test test/lib",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary mocha",
+    "coveralls": "nyc --reporter=text-lcov npm test | coveralls",
+    "web:build": "browserify index.js --standalone fav.text.diff -o web/fav.text.diff.js && cd web && uglifyjs fav.text.diff.js --compress --mangle -o fav.text.diff.min.js --source-map url=\"'fav.text.diff.min.js.map'\" && cd .. && node tool/make-web-test.js",
+    "web:test": "node tool/open-web-test.js",
+    "build": "npm run lint && npm run coverage && npm run web:build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sttk/fav-text.diff.git"
+  },
+  "keywords": [
+    "diff",
+    "text",
+    "fav"
+  ],
+  "author": "Takayuki Sato",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sttk/fav-text.diff/issues"
+  },
+  "homepage": "https://github.com/sttk/fav-text.diff#readme",
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "chai": "^3.5.0",
+    "coveralls": "^3.0.6",
+    "eslint": "^6.3.0",
+    "mocha": "^3.5.3",
+    "nyc": "^14.1.1",
+    "uglify-js": "^3.6.0"
+  }
+}
