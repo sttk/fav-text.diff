@@ -109,8 +109,71 @@ The edit info is an object of which properties is as follows:
 | `type`   | The edit type. This property can have following values: `'a'` (Adding), `'d'` (Deleting), and `'c'` (Changing). |
 | `src`    | The range of indexies in *srcText* to be editted. This is an object which has two indexes: `start` and `end`.  |
 | `dest`   | The range of indexies in *destText* to be editted. This is an object which has two indexes: `start` and `end`.  |
-| `lines.src`    | The range of line numbers in *srcText* to be editted. This is an object which has two line numbers: `start` and `end`.  |
-| `lines.dest`   | The range of line numbers in *destText* to be editted. This is an object which has two line numbers: `start` and `end`.  |
+| `lines.src`    | The range of line indexes in *srcText* to be editted. This is an object which has two line indexes: `start` and `end`.  |
+| `lines.dest`   | The range of line indexes in *destText* to be editted. This is an object which has two line indexes: `start` and `end`.  |
+
+The line index is zero-based. The ways to get lines to be editted are as follows:
+
+```js
+const srcText = 'aaa\nbbb\nccc\nddd';
+const dstText = 'aaa\nbb\ncccc\ne\nddd';
+diff.lines(srcText, dstText).forEach(d => {
+  const src = srcText.slice(d.src.start, d.src.end);
+  const dst = dstText.slice(d.dest.start, d.dest.end);
+
+  if (src) console.log('< ' + src.replace(/\n/g, '\n< '));
+  if (src && dst) console.log('---');
+  if (dst) console.log('> ' + dst.replace(/\n/g, '\n> '));
+});
+// => < bbb
+//    < ccc
+//    ---
+//    > bb
+//    > cccc
+//    > e
+```
+
+or
+
+```js
+const srcText = 'aaa\nbbb\nccc\nddd';
+const dstText = 'aaa\nbb\ncccc\ne\nddd';
+diff.lines(srcText, dstText).forEach(d => {
+  const srcLines = srcText.split('\n')
+                          .slice(d.lines.src.start, d.lines.src.end);
+  const dstLines = dstText.split('\n')
+                          .slice(d.lines.dest.start, d.lines.dest.end);
+
+  console.log(srcLines.map(line => '< ' + line).join('\n'));
+  if (srcLines.length && dstLines.length) console.log('---');
+  console.log(dstLines.map(line => '> ' + line).join('\n'));
+});
+// => < bbb
+//    < ccc
+//    ---
+//    > bb
+//    > cccc
+//    > e
+```
+
+The way to get line numbers as in diff normal format is as follows:
+
+```js
+const srcText = 'aaa\nbbb\nccc\nddd';
+const dstText = 'aaa\nbb\ncccc\ne\nddd';
+function getLineNo(range) {
+  if (range.start === range.end) return range.start;  // Minus line index
+  
+  var st = range.start + 1;  // Plus start line index to start line No.
+  var ed = range.end;        // Plus end line index to last line No.
+  if (st === ed) return st;
+  return st + ',' + ed;
+}
+diff.lines(srcText, dstText).forEach(d => {
+  console.log(getLineNo(d.lines.src) + d.type + getLineNo(d.lines.dest));
+});
+// => 2,3c2,4
+```
 
 ## Checked                                                                      
 
