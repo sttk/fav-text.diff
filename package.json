@@ -1,6 +1,6 @@
 {
   "name": "@fav/text.diff",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Get diff between two texts.",
   "main": "index.js",
   "files": [
